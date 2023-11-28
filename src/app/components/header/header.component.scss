@@ -1,0 +1,30 @@
+.wrapper {
+  padding: 20px 40px;
+  display: flex;
+  gap: 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  align-items: center;
+  background-color: rgb(242, 239, 239);
+  box-shadow: 0 0 5px 3px rgb(224, 223, 223);
+  .title {
+    width: 50%;
+    font-size: clamp(20px, 2rem, 30px);
+    font-weight: bold;
+  }
+  .currency {
+    display: flex;
+    align-items: center;
+    font-size: clamp(14px, 1.3rem, 20px);
+    font-weight: bold;
+    line-height: 20px;
+    height: 20px;
+    p{
+        margin-left: 10px;
+        font-size: clamp(14px, 1.3rem, 20px);
+        font-weight: normal;
+    }
+  }
+}
