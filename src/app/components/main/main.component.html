@@ -1,19 +1,23 @@
-<div class="wrapper">
-    <div>
-        <input type="text" placeholder="Choose currency">
-        <Select>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="UAH">UAH</option>
-        </Select>
-    </div>
-    <
-    <div>
-        <input type="text" placeholder="Choose currency">
-        <Select>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="UAH">UAH</option>
-        </Select>
-    </div>
+<div class="container">
+  <h2 class="title">Choose currency and write count</h2>
+  <div class="wrapper">
+    <div class="currency-group">
+        <input type="number" (keyup.enter)="changeCount($event)" [value]="input1" name="input1" />
+        <select [(ngModel)]="selectedCurrency1" name="currency1" (change)="changeCount($event)">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="UAH">UAH</option>
+        </select>
+      </div>
+      <i class="uil uil-exchange"></i>
+      <div class="currency-group">
+        <input type="number" (keyup.enter)="changeCount($event)" [value]="input2" name="input2"/>
+        <select  [(ngModel)]="selectedCurrency2" name="currency2" (change)="changeCount($event)">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="UAH">UAH</option>
+        </select>
+      </div>
+  </div>
+  
 </div>
