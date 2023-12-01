@@ -20,23 +20,6 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            input, select{
-                padding: 20px;
-                width: 150px;
-                border-radius: 5px;
-                border: 1px solid gray;
-                font-size: clamp(12px, 1.1rem, 16px);
-                outline: none;
-                &::placeholder{
-                    font-size: clamp(12px, 1.1rem, 16px);
-                }
-                &:focus{
-                    border-color: rgb(0, 187, 255);
-                }
-            }
-            select{
-                width: 100px;
-            }
         }
     }
 }
@@ -47,16 +30,6 @@
             gap: 20px;
             .uil-exchange{
                 font-size: 20px;
-            }
-            .currency-group{
-                input{
-                    padding: 15px;
-                    width: 120px;
-                }
-                select{
-                    width: 75px;
-                    padding: 15px 10px;
-                }
             }
         }
     }

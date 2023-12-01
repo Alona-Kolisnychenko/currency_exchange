@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
+import { currencies } from 'src/app/shared/data/currencies';
 
 @Component({
   selector: 'app-header',
@@ -7,29 +8,27 @@ import { CurrencyService } from 'src/app/shared/services/currency.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  public USD!: number;
-  public EUR!: number;
-
+  public rateToUAH: any = {};
+  
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit(): void {
-    this.getCurrency();
+    this.getCurrency(currencies);
   }
 
-  async getCurrency() {
-    await Promise.all([this.getUSD(), this.getEUR()]);
-  }
-
-  getUSD() {
-    this.currencyService.get().subscribe((data) => {
-      const [usd] = data.filter((el: any) => el.cc === 'USD');
-      this.USD = usd.rate;
-    });
-  }
-  getEUR() {
-    this.currencyService.get().subscribe((data) => {
-      const [eur] = data.filter((el: any) => el.cc === 'EUR');
-      this.EUR = eur.rate;
+  getCurrency(currency: Array<string>){
+    currency.forEach((element) => {
+      if (element.toUpperCase() !== 'UAH') {
+        this.currencyService.get().subscribe((data) => {
+          const [currentCurrency] = data.filter(
+            (el: any) => el.cc === element.toUpperCase()
+          );
+          this.rateToUAH = {
+            ...this.rateToUAH,
+            [currentCurrency.cc]: currentCurrency.rate,
+          };
+        });
+      }
     });
   }
 }

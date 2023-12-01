@@ -1,0 +1,14 @@
+<div class="select" (click)="closed = !closed">
+    {{ value }}
+    <i class="uil uil-angle-up" *ngIf="!closed"></i>
+    <i class="uil uil-angle-down"  *ngIf="closed"></i>
+</div>
+<div  [ngClass]="closed? 'closed options': 'options' ">
+  <p
+    class="option"
+    *ngFor="let currency of currencies"
+    (click)="setValue(currency)"
+  >
+    {{ currency }}
+  </p>
+</div>

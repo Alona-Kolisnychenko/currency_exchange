@@ -1,23 +1,14 @@
 <div class="container">
   <h2 class="title">Choose currency and write count</h2>
-  <div class="wrapper">
-    <div class="currency-group">
-        <input type="number" (keyup.enter)="changeCount($event)" [value]="input1" name="input1" />
-        <select [(ngModel)]="selectedCurrency1" name="currency1" (change)="changeCount($event)">
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-          <option value="UAH">UAH</option>
-        </select>
+  <form class="wrapper" [formGroup]="form" >
+      <div class="currency-group">
+        <app-custom-input formControlName="countFirst" (input)="changeCount()"></app-custom-input>
+        <app-custom-select  formControlName="currencyFirst" (click)="changeCount()"></app-custom-select>
       </div>
       <i class="uil uil-exchange"></i>
       <div class="currency-group">
-        <input type="number" (keyup.enter)="changeCount($event)" [value]="input2" name="input2"/>
-        <select  [(ngModel)]="selectedCurrency2" name="currency2" (change)="changeCount($event)">
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-          <option value="UAH">UAH</option>
-        </select>
+        <app-custom-input formControlName="countSecond" (input)="changeCount()"></app-custom-input>
+        <app-custom-select  formControlName="currencySecond" (click)="changeCount()"></app-custom-select>
       </div>
-  </div>
-  
+  </form>
 </div>

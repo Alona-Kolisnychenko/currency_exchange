@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { currencies } from 'src/app/shared/data/currencies';
 
 @Component({
   selector: 'app-main',
@@ -7,115 +9,110 @@ import { CurrencyService } from 'src/app/shared/services/currency.service';
   styleUrls: ['./main.component.scss'],
 })
 export class MainComponent implements OnInit {
-  public rateUSD!: number;
-  public rateEUR!: number;
+  public rateToUAH: any = {};
+  public form!: FormGroup;
+  public currencies = currencies;
+  public currentControl!: string;
 
-  public rateUSDEUR!: number;
-  public rateEURUSD!: number;
-
-  public selectedCurrency1 = 'USD';
-  public selectedCurrency2 = 'UAH';
-
-  public input1 = 0;
-  public input2 = 0;
-
-  constructor(private currencyService: CurrencyService) {}
+  constructor(
+    private currencyService: CurrencyService,
+    private fb: FormBuilder,
+  ) {}
 
   ngOnInit(): void {
-    this.getCurrency();
+    this.initForm();
+    this.getCurrentCurrency(currencies);
+    this.formSubscription();
   }
-
-  async getCurrency() {
-    await Promise.all([this.getUSD(), this.getEUR()]);
-  }
-
-  getUSD() {
-    this.currencyService.get().subscribe((data) => {
-      const [usd] = data.filter((el: any) => el.cc === 'USD');
-      this.rateUSD = usd.rate;
+  initForm(): void {
+    this.form = this.fb.group({
+      countFirst: 0,
+      countSecond: 0,
+      currencyFirst: 'USD',
+      currencySecond: 'UAH',
     });
   }
-  getEUR() {
-    this.currencyService.get().subscribe((data) => {
-      const [eur] = data.filter((el: any) => el.cc === 'EUR');
-      this.rateEUR = eur.rate;
+  getCurrentCurrency(currency: Array<string>): void {
+    currency.forEach((element) => {
+      if (element.toUpperCase() === 'UAH') {
+        this.rateToUAH = { ...this.rateToUAH, [element.toUpperCase()]: 1 };
+      } else {
+        this.currencyService.get().subscribe((data) => {
+          const [currentCurrency] = data.filter(
+            (el: any) => el.cc === element.toUpperCase()
+          );
+          this.rateToUAH = {
+            ...this.rateToUAH,
+            [currentCurrency.cc]: currentCurrency.rate,
+          };
+        });
+      }
+    });
+  }
+  formSubscription(): void {
+    this.formControlSubscription('countFirst');
+    this.formControlSubscription('countSecond');
+    this.formControlSubscription('currencyFirst');
+    this.formControlSubscription('currencySecond');
+  }
+
+  formControlSubscription(controlName: string): void {
+    this.form.controls[controlName].valueChanges.subscribe((v) => {
+      this.currentControl = controlName;
     });
   }
 
-  getRate() {
-    this.rateUSDEUR = this.rateEUR / this.rateUSD;
-    this.rateEURUSD = this.rateUSD / this.rateEUR;
+  valueByControl(control: string): string {
+    return this.form.get(control)?.value;
   }
 
-  getCurrentRate(enterCurrency: string, resultCurrency: string){
-    if (enterCurrency === 'USD' && resultCurrency === 'UAH') {
-      return this.rateUSD;
-    } else if (enterCurrency === 'EUR' && resultCurrency === 'UAH') {
-      return this.rateEUR;
-    } else if (
-      enterCurrency === 'USD' &&
-      resultCurrency === 'EUR'
-    ) {
-      return this.rateUSDEUR;
-    } else if (
-      enterCurrency === 'EUR' &&
-      resultCurrency === 'USD'
-    ) {
-      return this.rateEURUSD;
-    } else if (
-      enterCurrency === 'UAH' &&
-      resultCurrency === 'USD'
-    ) {
-      return (1 / this.rateUSD);
-    } else if (
-      enterCurrency === 'UAH' &&
-      resultCurrency === 'EUR'
-    ) {
-      return (1 / this.rateEUR);
-    } 
-    return 1;
+  getCurrentRate(enterCurrency: string, resultCurrency: string): number {
+    if (enterCurrency === resultCurrency) {
+      return 1;
+    } else if (resultCurrency === 'UAH') {
+      return this.rateToUAH[enterCurrency];
+    } else if (enterCurrency === 'UAH') {
+      return 1 / this.rateToUAH[resultCurrency];
+    } else {
+      return this.rateToUAH[enterCurrency] / this.rateToUAH[resultCurrency];
+    }
   }
 
-  convertCurrency(rate: number, count: number) {
+  convertCurrency(rate: number, count: number): number {
     const res = count * rate;
     return res;
   }
 
-  changeCount(event: any) {
-    this.getRate();
-    let count!:number;
+  changeCount(): void {
+    let count!: number;
     let enterCurrency!: string;
     let resultCurrency!: string;
-
-    if (event.target.name === 'input1') {
-      this.input1 = event.target.value;
-      enterCurrency = this.selectedCurrency1;
-      resultCurrency = this.selectedCurrency2;
-      count = event.target.value;
-    } else if (event.target.name === 'input2') {
-      this.input2 = event.target.value;
-      enterCurrency = this.selectedCurrency2;
-      resultCurrency = this.selectedCurrency1;
-      count = event.target.value;
-    } else if(event.target.name === 'currency1'){
-      enterCurrency = event.target.value;
-      resultCurrency = this.selectedCurrency2;
-      count = this.input1;
-    } else if(event.target.name === 'currency2'){
-      enterCurrency = this.selectedCurrency1;
-      resultCurrency = event.target.value;
-      count = this.input1;
+    const formValue = this.form.value;
+    if (
+      this.currentControl === 'countFirst' ||
+      this.currentControl === 'currencyFirst' ||
+      this.currentControl === 'currencySecond'
+    ) {
+      count = formValue.countFirst;
+      enterCurrency = formValue.currencyFirst;
+      resultCurrency = formValue.currencySecond;
+    } else if (this.currentControl === 'countSecond') {
+      enterCurrency = formValue.currencySecond;
+      resultCurrency = formValue.currencyFirst;
+      count = formValue.countSecond;
     }
 
-    const rate = this.getCurrentRate(enterCurrency, resultCurrency)
+    const rate = this.getCurrentRate(enterCurrency, resultCurrency);
     const res = this.convertCurrency(rate, count);
-    
-    if (event.target.name === 'input1' || event.target.name === 'currency1' || event.target.name === 'currency2') {
-      this.input2 = res;
-    } else if (event.target.name === 'input2' ) {
-      this.input1 = res;
-    } 
+
+    if (
+      this.currentControl  === 'countFirst' ||
+      this.currentControl  === 'currencyFirst' ||
+      this.currentControl  === 'currencySecond'
+    ) {
+      this.form.controls['countSecond'].setValue(res);
+    } else if (this.currentControl  === 'countSecond') {
+      this.form.controls['countFirst'].setValue(res);
+    }
   }
-
-
 }

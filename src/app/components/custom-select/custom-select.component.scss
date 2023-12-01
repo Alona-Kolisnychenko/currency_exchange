@@ -1,0 +1,68 @@
+:host{
+    position: relative;
+}
+
+.select {
+  padding: 20px;
+  width: 100px;
+  max-height: 60px;
+  border-radius: 5px;
+  border: 1px solid gray;
+  background-color: white;
+  font-size: clamp(12px, 1.1rem, 16px);
+  outline: none;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+  i{
+    font-size: clamp(14px, 1.1rem, 20px);;
+  }
+}
+.options{
+    z-index: 10;
+    position: absolute;
+    top: 63px;
+    left: 0;
+    width: 100px;
+    overflow: hidden;
+    border: 1px solid gray;
+    background-color: white;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 3px 4px 3px rgb(228, 228, 228);
+    transition: 0.3s;
+    .option{
+        width: 100%;
+        cursor: pointer;
+        transition: 0.3s;
+        padding: 5px;
+        text-align: center;
+        &:hover{
+            background-color: rgb(224, 222, 222);
+        }
+    }
+   
+}
+.closed{
+    height: 0;
+    overflow: hidden;
+    transition: 0.3s;
+    box-shadow: none;
+    border: none;
+
+}
+
+
+@media (max-width: 700px) {
+    .select {
+        width: 75px;
+        padding: 15px 10px;
+    }
+    .options{
+        width: 75px;
+        top: 53px;
+    }
+  }
